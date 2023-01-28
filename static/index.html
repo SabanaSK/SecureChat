@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <title>Secure Chat</title>
+  </head>
+
+  <body>
+    <header class="darker">
+      <h1>Secure Chat </h1>
+    </header>
+    <main class="dark">
+
+      <div class="left">
+        <div class="channels">
+
+          <h2>Channels</h2>
+          <input id="create-channels" type="text" placeholder="Channels name..." />
+          <input type="radio" id="private" /> <label for="html">Private</label>
+          <input type="radio" id="public" /> <label for="html">Public</label>
+          <button id="create-button" type="button">Create</button>
+
+          <!-- Här ska det skapas själv inte hardcodas -->
+          <!-- <div> welcome </div>
+          <div class="selected"> animal facts</div>
+          <div> 🔓 work</div>
+          <div> random </div> -->
+
+        </div>
+        <div class="separator"></div>
+        <div class="auth">
+          <!-- Här ska det visas efter man har loggar in -->
+          <!-- <div class="profile">
+            <div class="avatar"></div>
+            Edgar Djikstra
+          </div> 
+
+          <button>Sign out</button> -->
+
+          <p>Login</p>
+          <input type="text" value="" placeholder="Username..." />
+          <input type="password" value="" placeholder="Password...">
+          <button> Sign in </button>
+
+          <!-- samt registrera ny användare. -->
+        </div>
+      </div>
+
+      <div class="right">
+        <!-- Här ska det göras från js -->
+        <!-- <div class="right-heading"> animal facts </div> -->
+        <div class="message-list framed">
+          <!-- Meddelandet ska hanteras av js -->
+          <!-- <div class="message one framed"> Giraffer är fascinerande djur </div>
+          <div class="message two framed"> Visste du att giraffer kan bli 6 meter höga? </div>
+          <div class="message one framed"> Wow </div>
+          <div class="message one framed"> Det är högt </div>
+          <div class="message three framed"> Varför pratar ingen om tvättbjörnar?? </div>
+ -->
+        </div>
+
+        <div class="message-form">
+          <!-- Beror på vem som loggar in -->
+          <!--  <div class="avatar"></div> -->
+          <input type="text" value="" placeholder="Type your message..." />
+          <button> Send </button>
+        </div>
+
+      </div>
+    </main>
+  </body>
+
+</html>
