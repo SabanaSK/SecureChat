@@ -1,13 +1,8 @@
 import express from 'express'
-import db from '../../config/database.js'
+import getChannels from '../controllers/channelController.js'
+
 const router = express.Router()
 
-//GET users name and password
-router.get('/', (req, res) => {
-  const channels = db.data.channels;
-  res.status(200).send({ channels: channels })
-
-})
-
+router.get('/', getChannels)
 
 export default router

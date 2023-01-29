@@ -1,41 +1,51 @@
-const privateInput = document.querySelector('#private');
-const publicInput = document.querySelector('#public');
 const createChannelsButton = document.querySelector('#create-button');
+const radio = document.querySelectorAll('input[type="radio"]');
+const label = document.querySelectorAll('label');
+
+radio.forEach(function (radioButton) {
+  radioButton.addEventListener("click", function () {
+    console.log("radio button clicked");
+    if (radioButton.checked) {
+      radioButton.checked = !radioButton.checked;
+    }
+  });
+});
+
+
+
+
 
 //label for the radio buttons should be clickable
 //radio buttons should be able to select just one option
 //showing message for all errors that happen
-
 
 fetch("/api/channels")
   .then((response) => {
     return response.json();
   })
   .then((data) => {
-    // display the data on the front end
+
     let output = "";
     data.channels.forEach((item) => {
-      output = `<p>${item.channelName} ${item.privacy}</p>`;
+      output = `${item.channelName} ${item.privacy}`;
       let elements = document.createElement("div");
       elements.innerHTML = output;
 
-      document.getElementById("data").appendChild(elements)
+      document.querySelector(".channels").appendChild(elements)
     });
 
   })
-  .catch((error) => {
-    console.log("Error:", error);
-  });
+/*  .catch((error) => {
+   console.log("Error:", error);
+ }); */
 
 
 
 createChannelsButton.addEventListener("click", async function () {
   console.log("create button clicked");
-  let createChannelsInput = document.getElementById("create-channels").value;
+  let createChannelsInput = document.querySelector("#create-channels").value;
   let privacy;
 
-  //What happend of the user doesn't select any option?
-  //div created too late. Must be in channels list
   if (privateInput.checked) {
     privacy = "Private";
   } else if (publicInput.checked) {

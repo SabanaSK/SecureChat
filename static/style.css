@@ -98,7 +98,7 @@ input:not([type='radio']) {
   border: 2px solid #ff0066;
 }
 
-input[type='radio'] {
+input[type='radio']+label {
   cursor: pointer;
 }
 

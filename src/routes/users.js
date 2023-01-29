@@ -1,14 +1,11 @@
 import express from 'express'
 import db from '../../config/database.js'
+import login from '../controllers/usersController.js'
+
 const router = express.Router()
 
-//GET users name and password
-router.get('/', (req, res) => {
-  // const users = db.data.users;
-  console.log('users')
-  res.status(200).send('users')
 
-})
+router.get('/', login)
 
 
 export default router

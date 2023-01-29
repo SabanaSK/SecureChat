@@ -4,33 +4,30 @@ import { fileURLToPath } from 'url'
 import { JSONFile } from 'lowdb/node'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const file = join(__dirname, 'db.json')
-const adapter = new JSONFile(file)
-const db = new Low(adapter)
+const dbFile = join(__dirname, 'db.json')
+const authConfigFile = join(__dirname, 'auth_config.json')
+
+const dbAdapter = new JSONFile(dbFile)
+const authConfigAdapter = new JSONFile(authConfigFile)
+
+const db = new Low(dbAdapter)
+const authConfig = new Low(authConfigAdapter)
+
+
+
 
 await db.read()
+await authConfig.read()
 console.log(`the database is providing ${db.data}`)
-
-// if (db.data === null) {
-//   // vi använder namnet som id i det här exemplet
-//   db.data = [
+console.log(`the authConfig is providing ${authConfig.data}`)
 
 
-//   ]
 await db.write()
-// }
+await authConfig.write()
 
-/*  await db.data.set('user.name', 'typicode').write()
-// Set some defaults (required if your JSON file is empty)
-db.data ||= { users: [] }
-db.data ||= { messages: [] }
+export default {
+  db,
+  authConfig
+}
 
-Write
-await db.write() 
-// Read
-console.log(db.data.users)
-console.log(db.data.messages) */
 
-export default db
-// Path: config/database.js
-// Compare this snippet from src/server.js:

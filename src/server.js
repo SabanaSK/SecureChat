@@ -1,12 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import * as url from 'url';
-/* import db from '../config/database.js'; */
-import usersRoutes from './routes/users.js';
-/* import cors from 'cors'; */
 import * as dotenv from 'dotenv';
-// import messagesRoutes from './routes/messages.js';
+import usersRoutes from './routes/users.js';
 import channelsRoutes from './routes/channels.js';
+// import messagesRoutes from './routes/messages.js';
+
 
 const app = express();
 dotenv.config();
