@@ -1,3 +1,14 @@
 {
-  "users": []
+  "channels": [
+    {
+      "id": "1",
+      "channelName": "General",
+      "privacy": "Public"
+    },
+    {
+      "id": "2",
+      "channelName": "Only members",
+      "privacy": "Private"
+    }
+  ]
 }
