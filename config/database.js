@@ -4,30 +4,32 @@ import { fileURLToPath } from 'url'
 import { JSONFile } from 'lowdb/node'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const dbFile = join(__dirname, 'db.json')
+const file = join(__dirname, 'db.json')
+const adapter = new JSONFile(file)
+const db = new Low(adapter)
+/* 
 const authConfigFile = join(__dirname, 'auth_config.json')
-
-const dbAdapter = new JSONFile(dbFile)
 const authConfigAdapter = new JSONFile(authConfigFile)
-
-const db = new Low(dbAdapter)
 const authConfig = new Low(authConfigAdapter)
 
+ */
 
 
 
 await db.read()
-await authConfig.read()
+
 console.log(`the database is providing ${db.data}`)
-console.log(`the authConfig is providing ${authConfig.data}`)
+/* await authConfig.read()
+console.log(`the authConfig is providing ${authConfig.data}`) */
 
 
 await db.write()
-await authConfig.write()
-
+/* await authConfig.write() 
 export default {
   db,
   authConfig
-}
+} */
+
+export default db
 
 

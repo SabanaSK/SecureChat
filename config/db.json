@@ -10,5 +10,17 @@
       "channelName": "Only members",
       "privacy": "Private"
     }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "Sabana",
+      "password": "Sabana123"
+    },
+    {
+      "id": "2",
+      "username": "Sudarat",
+      "password": "Sudarat123"
+    }
   ]
 }

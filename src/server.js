@@ -10,7 +10,6 @@ import channelsRoutes from './routes/channels.js';
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
-/* const SECRET = process.env.SECRET; */
 const staticPath = url.fileURLToPath(new URL('../static', import.meta.url))
 
 const logger = (req, res, next) => {
