@@ -1,24 +1,28 @@
 const createChannelsButton = document.querySelector('#create-button');
 const radio = document.querySelectorAll('input[type="radio"]');
 const label = document.querySelectorAll('label');
+let clickRadio = 0;
 
-radio.forEach(function (radioButton) {
-  radioButton.addEventListener("click", function () {
-    console.log("radio button clicked");
-    if (radioButton.checked) {
-      radioButton.checked = !radioButton.checked;
+//radio button
+for (let input of radio) {
+  input.addEventListener("click", function () {
+    // Check if the radio button is being unchecked
+    if (input.checked && clickRadio % 2 === 0) {
+      input.checked = false;
+      clickRadio++;
+    }
+    // Check if the radio button is being checked
+    else if (input.checked && clickRadio % 2 !== 0) {
+      clickRadio++;
+    }
+    // Check if the radio button is being unchecked
+    else if (!input.checked) {
+      clickRadio--;
     }
   });
-});
+}
 
-
-
-
-
-//label for the radio buttons should be clickable
-//radio buttons should be able to select just one option
-//showing message for all errors that happen
-
+//Make the database display on the page
 fetch("/api/channels")
   .then((response) => {
     return response.json();
@@ -40,25 +44,60 @@ fetch("/api/channels")
  }); */
 
 
+//Create a new channel
+const API_ENDPOINT = "/api/channels";
 
-createChannelsButton.addEventListener("click", async function () {
-  console.log("create button clicked");
-  let createChannelsInput = document.querySelector("#create-channels").value;
-  let privacy;
-
-  if (privateInput.checked) {
-    privacy = "Private";
-  } else if (publicInput.checked) {
-    privacy = "Public";
-  }
-
-  const response = await fetch("/api/channels", {
-    method: "GET"
-  })
-
+function appendDiv(text) {
   const newDiv = document.createElement("div");
-  newDiv.innerText = `${createChannelsInput} ${privacy}`;
+  newDiv.innerText = text;
   let elements = document.querySelectorAll("main div");
   let element = elements[0].children[0];
   element.appendChild(newDiv);
+}
+
+function validateInput(inputValue) {
+  if (!inputValue) {
+    appendDiv("Please enter a channel name");
+    return false;
+  }
+  return true;
+}
+
+async function createChannel(channelName, privacy) {
+  try {
+    const response = await fetch(API_ENDPOINT, {
+      method: "GET"
+    })
+    appendDiv(`${channelName} ${privacy}`);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+createChannelsButton.addEventListener("click", function () {
+  const privateInput = document.querySelector("#radio-private");
+  const publicInput = document.querySelector("#radio-public");
+  const createChannelsInput = document.querySelector("#create-channels").value;
+  let privacy;
+
+  if (privateInput.checked && publicInput.checked) {
+    appendDiv("Please select only one option");
+    return;
+  } else if (!privateInput.checked && !publicInput.checked) {
+    appendDiv("Please select one option");
+    return;
+  }
+  else {
+    if (privateInput.checked) {
+      privacy = "Private";
+    } else if (publicInput.checked) {
+      privacy = "Public";
+    }
+
+    if (validateInput(createChannelsInput)) {
+      createChannel(createChannelsInput, privacy);
+    }
+  }
 });
+
+
