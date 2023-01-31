@@ -1,9 +1,45 @@
 const createChannelsButton = document.querySelector('#create-button');
 const radio = document.querySelectorAll('input[type="radio"]');
 const label = document.querySelectorAll('label');
+
+const registerBtn = document.querySelector('#registerBtn');
+const registerUsername = document.querySelector('#registerUsername');
+const registerPassword = document.querySelector('#registerPassword');
+const confirmPassword = document.querySelector('#confirmPassword');
+const registerForm = document.querySelector('.register-form');
+
+
+const loginBtn = document.querySelector('#loginBtn');
+const logoutBtn = document.querySelector('#logoutBtn');
+const username = document.querySelector('#username');
+const password = document.querySelector('#password');
+const profile = document.querySelector('.profile');
+const loginForm = document.querySelector('.login-form');
+const showRegisterBtn = document.querySelector('#show-register');
+const showLoginBtn = document.querySelector('#show-login');
+/* const passwordToggle = document.querySelector('.password-toggle'); */
+const welcomeMessage = document.querySelector('#welcomeMessage');
+
 const API_CHANNELS_ENDPOINT = "/api/channels";
+const API_REGISTER_ENDPOINT = "/api/register";
+const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
+const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
+
 let clickRadio = 0;
 
+loginForm.style.display = 'none';
+registerForm.style.display = 'none';
+profile.style.display = 'none';
+
+showRegisterBtn.addEventListener('click', () => {
+  loginForm.style.display = 'none';
+  registerForm.style.display = 'block';
+});
+
+showLoginBtn.addEventListener('click', () => {
+  loginForm.style.display = 'block';
+  registerForm.style.display = 'none';
+});
 
 //-----------------Channels, radio and create button-----------------
 //radio button
@@ -102,16 +138,6 @@ createChannelsButton.addEventListener("click", function () {
 });
 
 // -----------------Login-----------------
-const loginBtn = document.querySelector('#loginBtn');
-const logoutBtn = document.querySelector('#logoutBtn');
-const username = document.querySelector('#username');
-const password = document.querySelector('#password');
-/* const passwordToggle = document.querySelector('.password-toggle'); */
-const welcomeMessage = document.querySelector('#welcomeMessage');
-const API_USERS_ENDPOINT = "/api/users";
-
-document.querySelector('.profile').style.display = 'none';
-
 
 loginBtn.addEventListener('click', () => {
   // Make API call to check if the username and password are valid
@@ -119,7 +145,7 @@ loginBtn.addEventListener('click', () => {
     username: username.value,
     password: password.value,
   };
-  fetch(API_USERS_ENDPOINT, {
+  fetch(API_USERS_LOGIN_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(requestData),
@@ -132,10 +158,14 @@ loginBtn.addEventListener('click', () => {
         welcomeMessage.textContent = `Welcome ${username.value}`;
 
         // Show profile section
-        document.querySelector('.profile').style.display = 'block';
+        profile.style.display = 'block';
 
         // Hide login form
-        document.querySelector('.login-form').style.display = 'none';
+        loginForm.style.display = 'none';
+
+        // Hide register form
+        registerForm.style.display = 'none';
+
       } /* else {
     SHOW ERROR MESSAGE
       } */
@@ -149,10 +179,13 @@ logoutBtn.addEventListener('click', () => {
   // Perform logout action, e.g. clear local storage or make an API call to logout
 
   // Hide profile section
-  document.querySelector('.profile').style.display = 'none';
+  profile.style.display = 'none';
+
+  //Hide register form
+  registerForm.style.display = 'none';
 
   // Show login form
-  document.querySelector('.login-form').style.display = 'block';
+  loginForm.style.display = 'block';
 });
 
 /* passwordToggle.addEventListener('click', () => {
@@ -166,3 +199,46 @@ logoutBtn.addEventListener('click', () => {
     passwordToggle.classList.add('fa-eye');
   }
 }); */
+
+// -----------------Register-----------------
+
+registerBtn.addEventListener('click', () => {
+  if (registerPassword.value !== confirmPassword.value) {
+    console.error("Passwords don't match");
+    return;
+  }
+
+  // Make API call to register a new user
+  const requestData = {
+    username: registerUsername.value,
+    password: registerPassword.value,
+  };
+  fetch(API_REGISTER_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestData),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "success") {
+        console.log("User registered successfully");
+
+        //Hide login form
+        loginForm.style.display = 'none';
+
+        //Show register form
+        registerForm.style.display = 'block';
+
+        //Hide profile section
+        profile.style.display = 'none';
+
+
+      }
+      /* else {
+    SHOW ERROR MESSAGE
+      } */
+    })
+    .catch((error) => {
+      console.error('Error while registering:', error);
+    });
+});

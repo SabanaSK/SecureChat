@@ -102,6 +102,8 @@ input[type='radio']+label {
   cursor: pointer;
 }
 
+/* Tell CSS to not include the id */
+
 button {
   font-size: 100%;
   border-radius: 0.1em;
