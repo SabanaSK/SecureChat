@@ -141,8 +141,8 @@ createChannelsButton.addEventListener("click", function () {
 loginBtn.addEventListener('click', () => {
   // Make API call to check if the username and password are valid
   const requestData = {
-    username: username.value,
-    password: password.value,
+    username: username,
+    password: password,
   };
   fetch(API_USERS_LOGIN_ENDPOINT, {
     method: 'POST',
