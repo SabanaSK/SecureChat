@@ -21,7 +21,6 @@ const showLoginBtn = document.querySelector('#show-login');
 const welcomeMessage = document.querySelector('#welcomeMessage');
 
 const API_CHANNELS_ENDPOINT = "/api/channels";
-const API_REGISTER_ENDPOINT = "/api/register";
 const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
 const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
 
@@ -213,7 +212,7 @@ registerBtn.addEventListener('click', () => {
     username: registerUsername.value,
     password: registerPassword.value,
   };
-  fetch(API_REGISTER_ENDPOINT, {
+  fetch(API_USERS_REGISTER_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(requestData),

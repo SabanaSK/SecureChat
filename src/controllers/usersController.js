@@ -16,14 +16,12 @@ const login = ((req, res) => {
 const register = ((req, res) => {
   const { username, password } = req.body;
   const existingUser = users.find(u => u.username === username);
-  if (existingUser) {
-    res.status(400).json({ status: 'failed', message: 'Username already taken' });
-  } else {
+  if (!existingUser) {
     users.push({ username, password });
     res.status(201).json({ status: 'success' });
+  } else {
+    res.status(400).json({ status: 'failed', message: 'Username already taken' });
   }
-
-
 })
 
 function authenticateUser(username, password) {
