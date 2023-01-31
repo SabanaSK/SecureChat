@@ -139,7 +139,7 @@ createChannelsButton.addEventListener("click", function () {
 // -----------------Login-----------------
 
 loginBtn.addEventListener('click', () => {
-  // Make API call to check if the username and password are valid
+
   const requestData = {
     username: username,
     password: password,
@@ -152,17 +152,17 @@ loginBtn.addEventListener('click', () => {
     .then((res) => res.json())
     .then((data) => {
       if (data.status === "success") {
-        // Update welcome message with username
+
         console.log('the login is successful')
         welcomeMessage.textContent = `Welcome ${username.value}`;
 
-        // Show profile section
+
         profile.style.display = 'block';
 
-        // Hide login form
+
         loginForm.style.display = 'none';
 
-        // Hide register form
+
         registerForm.style.display = 'none';
 
       } /* else {

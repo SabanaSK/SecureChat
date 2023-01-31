@@ -15,12 +15,12 @@
     {
       "id": "1",
       "username": "Sabana",
-      "password": "Sabana123"
+      "password": "$2a$10$ZSjSRsqCS0b1ItkEjziKy.kAv7Nqmctos1SCd6UzZY4joAFQDW5ja"
     },
     {
       "id": "2",
       "username": "Sudarat",
-      "password": "Sudarat123"
+      "password": "$2a$10$pNt15OYPADNr94RdAScCEuAMEwGp7JxfcK3XxXYCUDyHkBuHWKjBC"
     }
   ]
 }
