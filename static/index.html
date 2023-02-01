@@ -25,10 +25,11 @@
           <input type="radio" id="radio-public" /> <label for="radio-public" id="label-public">Public</label>
           <button id="create-button" type="button">Create</button>
 
+          <h3>Choose your Chat Channels</h3>
 
           <!-- Här ska det skapas själv inte hardcodas -->
           <!--   <<div> welcome </div> -->
-          <div class="selected" tabindex="0"> animal facts</div> <!--  -->
+          <div class="selected"> animal facts</div> <!--  -->
           <!--  <div> 🔓 work</div>
           <div> random </div>  -->
 
@@ -65,9 +66,12 @@
 
 
       <div class="right">
-        <!-- Här ska det göras från js -->
-        <div class="right-heading"> animal facts </div>
+
+        <h2></h2>
         <div class="message-list framed">
+
+
+
           <!-- Meddelandet ska hanteras av js -->
           <div class="message one framed"> Giraffer är fascinerande djur </div>
           <div class="message two framed"> Visste du att giraffer kan bli 6 meter höga? </div>
@@ -79,8 +83,8 @@
         <div class="message-form">
           <!-- Beror på vem som loggar in -->
           <!--  <div class="avatar"></div> -->
-          <input type="text" value="" placeholder="Type your message..." />
-          <button> Send </button>
+          <input type="text" placeholder="Type your message..." id="message-input" />
+          <button type="button" id="send-button"> Send </button>
         </div>
 
       </div>

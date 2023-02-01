@@ -1,16 +1,22 @@
+//-----------------Variables for channels-----------------
 const createChannelsButton = document.querySelector('#create-button');
 const radio = document.querySelectorAll('input[type="radio"]');
 const label = document.querySelectorAll('label');
 const channels = document.querySelector('.channels');
+const channelRight = document.querySelector('.right h2');
 
-
+//-----------------Variables for messages-----------------
+const messageInput = document.querySelector("#message-input");
+const messageList = document.querySelector(".message-list");
+const sendButton = document.querySelector("#send-button");
+//-----------------Variables for regiter-----------------
 const registerBtn = document.querySelector('#registerBtn');
 const registerUsername = document.querySelector('#registerUsername');
 const registerPassword = document.querySelector('#registerPassword');
 const confirmPassword = document.querySelector('#confirmPassword');
 const registerForm = document.querySelector('.register-form');
 
-
+//-----------------Variables for login-----------------
 const loginBtn = document.querySelector('#loginBtn');
 const logoutBtn = document.querySelector('#logoutBtn');
 const username = document.querySelector('#username');
@@ -22,9 +28,12 @@ const showLoginBtn = document.querySelector('#show-login');
 /* const passwordToggle = document.querySelector('.password-toggle'); */
 const welcomeMessage = document.querySelector('#welcomeMessage');
 
+//-----------------Variables for API-----------------
 const API_CHANNELS_ENDPOINT = "/api/channels";
+const API_Messages_ENDPOINT = "/api/messages";
 const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
 const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
+
 
 let clickRadio = 1;
 let selectedDiv = null;
@@ -140,22 +149,52 @@ createChannelsButton.addEventListener("click", function () {
 });
 
 //make the channels div clickable
+//fix the bug where .channels is clickable
 channels.addEventListener('click', function (event) {
 
-  if (event.target.tagName === 'DIV') {
+  if (event.target.tagName === 'DIV' && !event.target.classList.contains('channels')) {
     if (event.target === selectedDiv) {
       selectedDiv.style.backgroundColor = '';
       selectedDiv = null;
+      channelRight.innerText = '';
     } else {
       if (selectedDiv) {
         selectedDiv.style.backgroundColor = '';
       }
       selectedDiv = event.target;
       event.target.style.backgroundColor = 'purple';
+      channelRight.innerText = event.target.innerText;
     }
+  }
+
+});
+
+// -----------------Messages-----------------
+
+
+//check if user is logged in
+//if user is logged in, and pick a channel, show the messages with uersname and time
+//if user is not logged in, show only the messages and time
+
+
+messageInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter" && messageInput.value) {
+    addMessage();
   }
 });
 
+sendButton.addEventListener("click", function () {
+  if (messageInput.value) {
+    addMessage();
+  }
+});
+
+function addMessage() {
+  const messageDiv = document.createElement("div");
+  messageDiv.innerText = messageInput.value;
+  messageList.appendChild(messageDiv);
+  messageInput.value = "";
+}
 
 // -----------------Login-----------------
 

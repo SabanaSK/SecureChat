@@ -2,9 +2,11 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import * as url from 'url';
 import * as dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import cors from 'cors';
 import usersRoutes from './routes/users.js';
 import channelsRoutes from './routes/channels.js';
-// import messagesRoutes from './routes/messages.js';
+import messagesRoutes from './routes/messages.js';
 
 
 const app = express();
@@ -18,12 +20,13 @@ const logger = (req, res, next) => {
   next()
 }
 
+
 app.use(express.json())
 app.use(logger)
 app.use(bodyParser.json())
 app.use('/api/users', usersRoutes)
-/* app.use(cors()); */
-// app.use('/api/messages', messagesRoutes);
+app.use(cors());
+app.use('/api/messages', messagesRoutes);
 app.use('/api/channels', channelsRoutes);
 app.use(express.static(staticPath))
 
@@ -32,4 +35,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+//export app and verifyToken
+/* export { app, verifyToken } */
 export default app
+

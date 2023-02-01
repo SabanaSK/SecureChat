@@ -37,7 +37,7 @@ const register = async (req, res) => {
   const existingUser = users.find(u => u.username === username)
   const passwordHash = bcrypt.hashSync(password, salt);
   let user = {
-    id: users.length + 1,
+    usersId: users.length + 1,
     username,
     password: passwordHash
   }
@@ -52,17 +52,7 @@ const register = async (req, res) => {
 }
 
 /* const secret = async (req, res) => {
-  const token = req.headers.authorization.split(' ')[1]
-  const payload = jwt.verify(token, process.env.JWT_KEY)
-
-  if (payload) {
-    res.status(200).json({ status: 'success', message: 'You have access to the secret' });
-  } else {
-    res.status(401).json({ status: 'failed', message: 'You are not authorized to access the secret' });
-  }
-
-}
-
- */
+  res.status(200).json({ status: 'success', message: 'You have access to the secret', user: req.user });
+}; */
 
 export default { login, register/* , secret */ }
