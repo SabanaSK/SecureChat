@@ -192,9 +192,12 @@ sendButton.addEventListener("click", function () {
 function addMessage() {
   const messageDiv = document.createElement("div");
   messageDiv.innerText = messageInput.value;
+  messageDiv.classList.add("message");
+  messageDiv.classList.add("framed");
   messageList.appendChild(messageDiv);
   messageInput.value = "";
 }
+
 
 // -----------------Login-----------------
 
