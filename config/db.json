@@ -21,6 +21,11 @@
       "id": "2",
       "username": "Sudarat",
       "password": "$2a$10$pNt15OYPADNr94RdAScCEuAMEwGp7JxfcK3XxXYCUDyHkBuHWKjBC"
+    },
+    {
+      "id": 3,
+      "username": "Sabana5",
+      "password": "$2a$10$cgwz.ukf4nQ6kaDjnn78a.a98tBP7K8WCpFPhJmKyuefqF8u12Mi2"
     }
   ]
 }

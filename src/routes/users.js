@@ -8,5 +8,6 @@ router.post('/login', usersController.login)
 
 router.post('/register', usersController.register)
 
+/* router.get('/secret', usersController.secret) */
 
 export default router

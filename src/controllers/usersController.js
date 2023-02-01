@@ -1,9 +1,18 @@
 import db from '../../config/database.js'
 import bcrypt from 'bcryptjs';
-import createToken from '../server.js'
-
+import jwt from 'jsonwebtoken';
 const users = db.data.users
 const salt = bcrypt.genSaltSync(10);
+
+
+
+function createToken(username) {
+  const payload = { username: username }
+  const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '1h' })
+  payload.token = token
+  console.log('createToken', payload)
+  return payload
+}
 
 const login = async (req, res) => {
   const { username, password } = req.body
@@ -22,7 +31,6 @@ const login = async (req, res) => {
     res.sendStatus(401)
   }
 }
-
 
 const register = async (req, res) => {
   const { username, password } = req.body;
@@ -43,7 +51,18 @@ const register = async (req, res) => {
   }
 }
 
+/* const secret = async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]
+  const payload = jwt.verify(token, process.env.JWT_KEY)
 
+  if (payload) {
+    res.status(200).json({ status: 'success', message: 'You have access to the secret' });
+  } else {
+    res.status(401).json({ status: 'failed', message: 'You are not authorized to access the secret' });
+  }
 
+}
 
-export default { login, register }
+ */
+
+export default { login, register/* , secret */ }

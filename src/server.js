@@ -2,7 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import * as url from 'url';
 import * as dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
 import usersRoutes from './routes/users.js';
 import channelsRoutes from './routes/channels.js';
 // import messagesRoutes from './routes/messages.js';
@@ -11,7 +10,7 @@ import channelsRoutes from './routes/channels.js';
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
-const SECRET = process.env.SECRET;
+const JWT_KEY = process.env.JWT_KEY;
 const staticPath = url.fileURLToPath(new URL('../static', import.meta.url))
 
 const logger = (req, res, next) => {
@@ -29,18 +28,8 @@ app.use('/api/channels', channelsRoutes);
 app.use(express.static(staticPath))
 
 
-function createToken(username) {
-  const user = { username: username }
-  const token = jwt.sign(user, process.env.SECRET, { expiresIn: '1h' })
-  user.token = token
-  console.log('createToken', user)
-  return user
-}
-
-
-
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-export default { app, createToken }
+export default app
