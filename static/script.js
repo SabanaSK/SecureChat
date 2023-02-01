@@ -1,3 +1,4 @@
+
 //-----------------Variables for channels-----------------
 const createChannelsButton = document.querySelector('#create-button');
 const radio = document.querySelectorAll('input[type="radio"]');
@@ -114,11 +115,21 @@ function validateInput(inputValue) {
 async function createChannel(channelName, privacy) {
   try {
     const response = await fetch(API_CHANNELS_ENDPOINT, {
-      method: "GET"
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ channelName, privacy })
     })
-    appendDiv(`${channelName} ${privacy}`);
+    const data = await response.json();
+    if (data.success) {
+      appendDiv(`${channelName} ${privacy}`);
+    } else {
+      appendDiv(data.error);
+    }
   } catch (error) {
     console.error(error);
+    appendDiv("Error creating channel");
   }
 }
 
@@ -149,7 +160,6 @@ createChannelsButton.addEventListener("click", function () {
 });
 
 //make the channels div clickable
-//fix the bug where .channels is clickable
 channels.addEventListener('click', function (event) {
 
   if (event.target.tagName === 'DIV' && !event.target.classList.contains('channels')) {
@@ -204,8 +214,8 @@ function addMessage() {
 loginBtn.addEventListener('click', () => {
 
   const requestData = {
-    username: username,
-    password: password,
+    username: username.value,
+    password: password.value,
   };
   fetch(API_USERS_LOGIN_ENDPOINT, {
     method: 'POST',

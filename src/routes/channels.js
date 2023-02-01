@@ -1,8 +1,11 @@
 import express from 'express'
-import getChannels from '../controllers/channelController.js'
+import channelsController from '../controllers/channelController.js'
 
 const router = express.Router()
 
-router.get('/', getChannels)
+router.get('/', channelsController.getChannels)
+
+router.post('/', channelsController.createChannel)
+
 
 export default router
