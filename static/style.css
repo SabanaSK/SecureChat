@@ -140,6 +140,7 @@ button:hover {
   width: 20em;
 }
 
+
 .channels>*:not(input, label, h2, button),
 .right-heading {
   background-color: #cd67dd;
@@ -150,6 +151,10 @@ button:hover {
   text-align: center;
 }
 
+.channels div:hover {
+  background-color: #9f29b1;
+  cursor: pointer;
+}
 
 #create-channels {
   background: white;

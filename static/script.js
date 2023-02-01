@@ -1,6 +1,8 @@
 const createChannelsButton = document.querySelector('#create-button');
 const radio = document.querySelectorAll('input[type="radio"]');
 const label = document.querySelectorAll('label');
+const channels = document.querySelector('.channels');
+
 
 const registerBtn = document.querySelector('#registerBtn');
 const registerUsername = document.querySelector('#registerUsername');
@@ -24,7 +26,8 @@ const API_CHANNELS_ENDPOINT = "/api/channels";
 const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
 const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
 
-let clickRadio = 0;
+let clickRadio = 1;
+let selectedDiv = null;
 
 loginForm.style.display = 'none';
 registerForm.style.display = 'none';
@@ -135,6 +138,24 @@ createChannelsButton.addEventListener("click", function () {
     }
   }
 });
+
+//make the channels div clickable
+channels.addEventListener('click', function (event) {
+
+  if (event.target.tagName === 'DIV') {
+    if (event.target === selectedDiv) {
+      selectedDiv.style.backgroundColor = '';
+      selectedDiv = null;
+    } else {
+      if (selectedDiv) {
+        selectedDiv.style.backgroundColor = '';
+      }
+      selectedDiv = event.target;
+      event.target.style.backgroundColor = 'purple';
+    }
+  }
+});
+
 
 // -----------------Login-----------------
 
