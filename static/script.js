@@ -5,6 +5,7 @@ const radio = document.querySelectorAll('input[type="radio"]');
 const label = document.querySelectorAll('label');
 const channels = document.querySelector('.channels');
 const channelRight = document.querySelector('.right h2');
+const channelsForm = document.querySelector('.channels-form');
 
 //-----------------Variables for messages-----------------
 const messageInput = document.querySelector("#message-input");
@@ -31,13 +32,15 @@ const welcomeMessage = document.querySelector('#welcomeMessage');
 
 //-----------------Variables for API-----------------
 const API_CHANNELS_ENDPOINT = "/api/channels";
-const API_Messages_ENDPOINT = "/api/messages";
+const API_MESSAGES_ENDPOINT = "/api/messages";
 const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
 const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
-
+const API_USERS_AUTOLOGIN_ENDPOINT = "/api/users/autologin";
 
 let clickRadio = 1;
 let selectedDiv = null;
+let IsAuthorised = false;
+let privacy;
 
 loginForm.style.display = 'none';
 registerForm.style.display = 'none';
@@ -73,6 +76,58 @@ for (let input of radio) {
   });
 }
 
+
+//When a channels is clicking must be inside 
+//Display message data from database
+
+/* THIS CODE IS COMING FROM GET CHANNELS CAN USE SAME JUST EDIT
+fetch(const API_MESSAGES_ENDPOINT)
+  .then((response) => {
+    return response.json();
+  })
+  .then((data) => {
+
+    let output = "";
+    data.messages.forEach((item) => {
+      output = `${item.channelName} ${item.privacy}`;
+      let elements = document.createElement("div");
+      elements.innerHTML = output;
+
+      document.querySelector(".channels").appendChild(elements)
+    });
+
+  }) */
+
+
+//AutoLogin
+fetch(API_USERS_AUTOLOGIN_ENDPOINT, {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'token': localStorage.getItem('token')
+  }
+}).then((response) => {
+  return response.json();
+}).then((data) => {
+  if (data.status === "success") {
+    console.log('the login is successful')
+
+    console.log('the login is successful', data);
+    let username = data.username;
+    welcomeMessage.textContent = `Welcome ${username}`;
+
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'none';
+    profile.style.display = 'block';
+  } /* else {
+  SHOW ERROR MESSAGE
+    } */
+});
+
+
+/*  sendErrorResponse(res, 'Invalid token'); */
+
+
 //Make the database display on the page
 fetch(API_CHANNELS_ENDPOINT)
   .then((response) => {
@@ -94,8 +149,18 @@ fetch(API_CHANNELS_ENDPOINT)
    console.log("Error:", error);
  }); */
 
+/* 
+//Create a new channel function is for only authoriza user
+if (!IsAuthorised) {
+  channelsForm.style.display = 'none';
+} else {
+  channelsForm.style.display = 'block';
+} */
 
-//Create a new channel
+function toggleChannelsForm(isAuthorized) {
+  channelsForm.style.display = isAuthorized ? 'block' : 'none';
+}
+
 function appendDiv(text) {
   const newDiv = document.createElement("div");
   newDiv.innerText = text;
@@ -137,7 +202,6 @@ createChannelsButton.addEventListener("click", function () {
   const privateInput = document.querySelector("#radio-private");
   const publicInput = document.querySelector("#radio-public");
   const createChannelsInput = document.querySelector("#create-channels").value;
-  let privacy;
 
   if (privateInput.checked && publicInput.checked) {
     appendDiv("Please select only one option");
@@ -161,8 +225,7 @@ createChannelsButton.addEventListener("click", function () {
 
 //make the channels div clickable
 channels.addEventListener('click', function (event) {
-
-  if (event.target.tagName === 'DIV' && !event.target.classList.contains('channels')) {
+  if (event.target.tagName === 'DIV' && !event.target.classList.contains('channels') && !event.target.classList.contains('channels-form')) {
     if (event.target === selectedDiv) {
       selectedDiv.style.backgroundColor = '';
       selectedDiv = null;
@@ -217,6 +280,7 @@ loginBtn.addEventListener('click', () => {
     username: username.value,
     password: password.value,
   };
+
   fetch(API_USERS_LOGIN_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -225,6 +289,9 @@ loginBtn.addEventListener('click', () => {
     .then((res) => res.json())
     .then((data) => {
       if (data.status === "success") {
+
+        IsAuthorised = true;
+        toggleChannelsForm(IsAuthorised);
 
         console.log('the login is successful')
         welcomeMessage.textContent = `Welcome ${username.value}`;
@@ -238,6 +305,9 @@ loginBtn.addEventListener('click', () => {
 
         registerForm.style.display = 'none';
 
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
       } /* else {
     SHOW ERROR MESSAGE
       } */
@@ -249,7 +319,7 @@ loginBtn.addEventListener('click', () => {
 
 logoutBtn.addEventListener('click', () => {
   // Perform logout action, e.g. clear local storage or make an API call to logout
-
+  IsAuthorised = false;
   // Hide profile section
   profile.style.display = 'none';
 
