@@ -59,13 +59,14 @@ const autoLogin = (req, res) => {
       const decoded = jwt.verify(token, process.env.JWT_KEY);
       res.status(200).json({ status: 'success', username: decoded.username, token })
     } catch (error) {
-      console.log('Catch! Invalid token!! ', error.message);
+      console.log('Catch! Invalid token', error.message);
       res.status(401).json({ status: 'failed', message: 'Invalid token' });
     }
   } else {
-    console.log('No token');
-    /*  sendErrorResponse(res, 'Invalid token'); */
+    console.log('No token  (No User is logged in) Token:', token);
   }
+  /*  sendErrorResponse(res, 'Invalid token'); */
+
 };
 
 const verifyToken = (req, res) => {

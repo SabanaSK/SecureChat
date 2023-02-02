@@ -18,7 +18,7 @@ const authConfig = new Low(authConfigAdapter)
 
 await db.read()
 
-console.log(`the database is providing ${db.data}`)
+console.log(`the database is providing`, db.data)
 /* await authConfig.read()
 console.log(`the authConfig is providing ${authConfig.data}`) */
 

@@ -148,7 +148,7 @@ button:hover {
   font-size: 110%;
 }
 
-.channels>*:not(h2, input) {
+.channels>*:not(h2, input, .show-auth) {
   width: 20em;
 }
 

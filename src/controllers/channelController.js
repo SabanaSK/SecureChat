@@ -1,10 +1,22 @@
 import db from '../../config/database.js';
 
 const channels = db.data.channels
+const messages = db.data.messages
+
 const getChannels = ((req, res) => {
     const channels = db.data.channels;
     res.status(200).send({ channels: channels })
 })
+
+const getMessagesByChannel = (req, res) => {
+    const channelId = req.params.id;
+    if (!channelId) {
+        return res.status(400).json({ status: 'failed', error: 'Please provide a channel id' });
+    }
+    const channelMessages = messages.filter(m => m.channelId === channelId);
+    res.status(200).send({ messages: channelMessages });
+};
+
 
 const createChannel = async (req, res) => {
     const { channelName, privacy } = req.body;
@@ -18,7 +30,7 @@ const createChannel = async (req, res) => {
             channelName: channelName,
             privacy: privacy,
         };
-        channels.push(newChannel);
+        channels.push(newChannel)
         await db.write();
 
         return res.status(200).json({ success: true });
@@ -31,4 +43,4 @@ const createChannel = async (req, res) => {
 
 
 
-export default { getChannels, createChannel };
+export default { getChannels, createChannel, getMessagesByChannel };

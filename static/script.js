@@ -1,4 +1,3 @@
-
 //-----------------Variables for channels-----------------
 const createChannelsButton = document.querySelector('#create-button');
 const radio = document.querySelectorAll('input[type="radio"]');
@@ -27,9 +26,8 @@ const profile = document.querySelector('.profile');
 const loginForm = document.querySelector('.login-form');
 const showRegisterBtn = document.querySelector('#show-register');
 const showLoginBtn = document.querySelector('#show-login');
-/* const passwordToggle = document.querySelector('.password-toggle'); */
+const pOptions = document.querySelector('#pOptions');
 const welcomeMessage = document.querySelector('#welcomeMessage');
-
 //-----------------Variables for API-----------------
 const API_CHANNELS_ENDPOINT = "/api/channels";
 const API_MESSAGES_ENDPOINT = "/api/messages";
@@ -39,12 +37,16 @@ const API_USERS_AUTOLOGIN_ENDPOINT = "/api/users/autologin";
 
 let clickRadio = 1;
 let selectedDiv = null;
-let IsAuthorised = false;
+let currentChannelId = 0;
+let currentUserId = 0;
 let privacy;
+
+
 
 loginForm.style.display = 'none';
 registerForm.style.display = 'none';
 profile.style.display = 'none';
+channelsForm.style.display = 'none';
 
 showRegisterBtn.addEventListener('click', () => {
   loginForm.style.display = 'none';
@@ -77,56 +79,6 @@ for (let input of radio) {
 }
 
 
-//When a channels is clicking must be inside 
-//Display message data from database
-
-/* THIS CODE IS COMING FROM GET CHANNELS CAN USE SAME JUST EDIT
-fetch(const API_MESSAGES_ENDPOINT)
-  .then((response) => {
-    return response.json();
-  })
-  .then((data) => {
-
-    let output = "";
-    data.messages.forEach((item) => {
-      output = `${item.channelName} ${item.privacy}`;
-      let elements = document.createElement("div");
-      elements.innerHTML = output;
-
-      document.querySelector(".channels").appendChild(elements)
-    });
-
-  }) */
-
-
-//AutoLogin
-fetch(API_USERS_AUTOLOGIN_ENDPOINT, {
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/json',
-    'token': localStorage.getItem('token')
-  }
-}).then((response) => {
-  return response.json();
-}).then((data) => {
-  if (data.status === "success") {
-    console.log('the login is successful')
-
-    console.log('the login is successful', data);
-    let username = data.username;
-    welcomeMessage.textContent = `Welcome ${username}`;
-
-    loginForm.style.display = 'none';
-    registerForm.style.display = 'none';
-    profile.style.display = 'block';
-  } /* else {
-  SHOW ERROR MESSAGE
-    } */
-});
-
-
-/*  sendErrorResponse(res, 'Invalid token'); */
-
 
 //Make the database display on the page
 fetch(API_CHANNELS_ENDPOINT)
@@ -140,7 +92,7 @@ fetch(API_CHANNELS_ENDPOINT)
       output = `${item.channelName} ${item.privacy}`;
       let elements = document.createElement("div");
       elements.innerHTML = output;
-
+      elements.setAttribute("data-channel-id", item.channelId);
       document.querySelector(".channels").appendChild(elements)
     });
 
@@ -149,17 +101,6 @@ fetch(API_CHANNELS_ENDPOINT)
    console.log("Error:", error);
  }); */
 
-/* 
-//Create a new channel function is for only authoriza user
-if (!IsAuthorised) {
-  channelsForm.style.display = 'none';
-} else {
-  channelsForm.style.display = 'block';
-} */
-
-function toggleChannelsForm(isAuthorized) {
-  channelsForm.style.display = isAuthorized ? 'block' : 'none';
-}
 
 function appendDiv(text) {
   const newDiv = document.createElement("div");
@@ -230,13 +171,45 @@ channels.addEventListener('click', function (event) {
       selectedDiv.style.backgroundColor = '';
       selectedDiv = null;
       channelRight.innerText = '';
+      currentChannelId = 0;
     } else {
       if (selectedDiv) {
         selectedDiv.style.backgroundColor = '';
       }
+      while (messageList.firstChild) {
+        messageList.removeChild(messageList.firstChild);
+      }
       selectedDiv = event.target;
       event.target.style.backgroundColor = 'purple';
       channelRight.innerText = event.target.innerText;
+      currentChannelId = event.target.dataset.channelId;
+
+      //fetch the messages from the database
+      fetch(API_CHANNELS_ENDPOINT + `/${currentChannelId}/messages`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'token': localStorage.getItem('token')
+        }
+      })
+        .then((response) => {
+          return response.json();
+        }).then((data) => {
+          data.messages.forEach((item) => {
+            const currentTimeDiv = document.createElement("div");
+            const messageDiv = document.createElement("div");
+
+            currentTimeDiv.innerText = item.date;
+            currentTimeDiv.classList.add("message");
+            currentTimeDiv.classList.add("framed");
+            messageDiv.innerText = item.messageText;
+            messageDiv.classList.add("message");
+            messageDiv.classList.add("framed");
+            messageList.appendChild(currentTimeDiv)
+            messageList.appendChild(messageDiv)
+          });
+
+        })
     }
   }
 
@@ -263,13 +236,90 @@ sendButton.addEventListener("click", function () {
 });
 
 function addMessage() {
+  const currentTimeDiv = document.createElement("div");
   const messageDiv = document.createElement("div");
-  messageDiv.innerText = messageInput.value;
-  messageDiv.classList.add("message");
-  messageDiv.classList.add("framed");
-  messageList.appendChild(messageDiv);
-  messageInput.value = "";
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // 0-based index, add 1 for human-readable month
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const currentTime = `${day}-${month} ${hours}:${minutes}:${seconds}`;
+
+  const requestData = {
+    message: messageInput.value,
+    date: currentTime,
+    userId: currentUserId,
+    channelId: currentChannelId,
+  };
+
+  fetch(API_MESSAGES_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestData),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "success") {
+        console.log("Add message successfully");
+
+        currentTimeDiv.innerText = currentTime;
+        currentTimeDiv.classList.add("message");
+        currentTimeDiv.classList.add("framed");
+        messageDiv.innerText = messageInput.value;
+        messageDiv.classList.add("message");
+        messageDiv.classList.add("framed");
+
+        messageList.appendChild(currentTimeDiv);
+        messageList.appendChild(messageDiv);
+        messageInput.value = "";
+
+      }
+    })
+    .catch((error) => {
+      console.error('Error while add message:', error);
+    });
 }
+
+
+// -----------------AutoLogin-----------------
+
+//AutoLogin
+fetch(API_USERS_AUTOLOGIN_ENDPOINT, {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json',
+    'token': localStorage.getItem('token')
+  }
+}).then((response) => {
+  return response.json();
+}).then((data) => {
+  if (data.status === "success") {
+    console.log('the login is successful')
+
+    console.log('the login is successful', data);
+    let username = data.username;
+    currentUserId = data.userId;
+    welcomeMessage.textContent = `Welcome ${username}`;
+
+    showRegisterBtn.style.display = 'none';
+    showLoginBtn.style.display = 'none';
+
+    channelsForm.style.display = 'block';
+    loginForm.style.display = 'none';
+
+    registerForm.style.display = 'none';
+
+    profile.style.display = 'block';
+
+  } else if (data.status === "unauthorised") {
+    console.log('401: No user is logged in');
+  }
+  else {
+    console.log('Data.status is not success or unauthorised, Look at terminal');
+  }
+});
+
 
 
 // -----------------Login-----------------
@@ -290,13 +340,11 @@ loginBtn.addEventListener('click', () => {
     .then((data) => {
       if (data.status === "success") {
 
-        IsAuthorised = true;
-        toggleChannelsForm(IsAuthorised);
 
         console.log('the login is successful')
         welcomeMessage.textContent = `Welcome ${username.value}`;
 
-
+        channelsForm.style.display = 'block';
         profile.style.display = 'block';
 
 
@@ -305,42 +353,39 @@ loginBtn.addEventListener('click', () => {
 
         registerForm.style.display = 'none';
 
+
+        currentUserId = data.userId;
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
-      } /* else {
-    SHOW ERROR MESSAGE
-      } */
+        username.value = '';
+        password.value = '';
+
+      }
     })
     .catch((error) => {
       console.error('Error while logging in:', error);
     });
 });
 
+// -----------------Logout-----------------
 logoutBtn.addEventListener('click', () => {
   // Perform logout action, e.g. clear local storage or make an API call to logout
-  IsAuthorised = false;
-  // Hide profile section
+  localStorage.removeItem('token');
+
+  showRegisterBtn.style.display = 'block';
+  showLoginBtn.style.display = 'block';
+
+  channelsForm.style.display = 'none';
+
   profile.style.display = 'none';
 
-  //Hide register form
   registerForm.style.display = 'none';
 
-  // Show login form
   loginForm.style.display = 'block';
 });
 
-/* passwordToggle.addEventListener('click', () => {
-  if (password.type === 'password') {
-    password.type = 'text';
-    passwordToggle.classList.remove('fa-eye');
-    passwordToggle.classList.add('fa-eye-slash');
-  } else {
-    password.type = 'password';
-    passwordToggle.classList.remove('fa-eye-slash');
-    passwordToggle.classList.add('fa-eye');
-  }
-}); */
+
 
 // -----------------Register-----------------
 
@@ -373,12 +418,11 @@ registerBtn.addEventListener('click', () => {
 
         //Hide profile section
         profile.style.display = 'none';
-
+        registerUsername.value = '';
+        registerPassword.value = '';
 
       }
-      /* else {
-    SHOW ERROR MESSAGE
-      } */
+
     })
     .catch((error) => {
       console.error('Error while registering:', error);
