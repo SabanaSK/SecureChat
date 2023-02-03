@@ -196,16 +196,12 @@ channels.addEventListener('click', function (event) {
           return response.json();
         }).then((data) => {
           data.messages.forEach((item) => {
-            const currentTimeDiv = document.createElement("div");
             const messageDiv = document.createElement("div");
 
-            currentTimeDiv.innerText = item.date;
-            currentTimeDiv.classList.add("message");
-            currentTimeDiv.classList.add("framed");
-            messageDiv.innerText = item.messageText;
+
+            messageDiv.innerText = item.userId + " " + item.date + " " + item.messageText;
             messageDiv.classList.add("message");
             messageDiv.classList.add("framed");
-            messageList.appendChild(currentTimeDiv)
             messageList.appendChild(messageDiv)
           });
 
@@ -236,15 +232,16 @@ sendButton.addEventListener("click", function () {
 });
 
 function addMessage() {
-  const currentTimeDiv = document.createElement("div");
   const messageDiv = document.createElement("div");
   const date = new Date();
   const day = date.getDate();
   const month = date.getMonth() + 1; // 0-based index, add 1 for human-readable month
+  const year = date.getFullYear();
   const hours = date.getHours();
   const minutes = date.getMinutes();
   const seconds = date.getSeconds();
-  const currentTime = `${day}-${month} ${hours}:${minutes}:${seconds}`;
+  const currentTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+
 
   const requestData = {
     message: messageInput.value,
@@ -263,14 +260,9 @@ function addMessage() {
       if (data.status === "success") {
         console.log("Add message successfully");
 
-        currentTimeDiv.innerText = currentTime;
-        currentTimeDiv.classList.add("message");
-        currentTimeDiv.classList.add("framed");
-        messageDiv.innerText = messageInput.value;
+        messageDiv.innerText = currentUserId + " " + currentTime + " " + messageInput.value;
         messageDiv.classList.add("message");
         messageDiv.classList.add("framed");
-
-        messageList.appendChild(currentTimeDiv);
         messageList.appendChild(messageDiv);
         messageInput.value = "";
 
@@ -371,6 +363,7 @@ loginBtn.addEventListener('click', () => {
 // -----------------Logout-----------------
 logoutBtn.addEventListener('click', () => {
   // Perform logout action, e.g. clear local storage or make an API call to logout
+  currentUserId = 0;
   localStorage.removeItem('token');
 
   showRegisterBtn.style.display = 'block';
@@ -384,7 +377,6 @@ logoutBtn.addEventListener('click', () => {
 
   loginForm.style.display = 'block';
 });
-
 
 
 // -----------------Register-----------------
