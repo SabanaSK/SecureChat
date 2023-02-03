@@ -428,7 +428,7 @@ registerBtn.addEventListener('click', () => {
     return;
   }
 
-  // Make API call to register a new user
+
   const requestData = {
     username: registerUsername.value,
     password: registerPassword.value,
