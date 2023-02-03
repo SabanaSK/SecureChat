@@ -25,6 +25,13 @@
       "date": "3-2-2023 9:19:33",
       "userId": 0,
       "channelId": "1"
+    },
+    {
+      "messageId": 2,
+      "messageText": "Yo!",
+      "date": "3-2-2023 20:28:11",
+      "userId": 0,
+      "channelId": "1"
     }
   ]
 }

@@ -16,6 +16,7 @@ const registerUsername = document.querySelector('#registerUsername');
 const registerPassword = document.querySelector('#registerPassword');
 const confirmPassword = document.querySelector('#confirmPassword');
 const registerForm = document.querySelector('.register-form');
+
 //-----------------Variables for login-----------------
 const loginBtn = document.querySelector('#loginBtn');
 const logoutBtn = document.querySelector('#logoutBtn');
@@ -30,7 +31,7 @@ const loginP = document.querySelector('#login-p');
 //-----------------Variables for API-----------------
 const API_CHANNELS_ENDPOINT = "/api/channels";
 const API_MESSAGES_ENDPOINT = "/api/messages";
-const API_USERS_ENDPOINT = "/api/users/getusers";
+const API_USERS_ENDPOINT = "/api/users/getuser";
 const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
 const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
 const API_USERS_AUTOLOGIN_ENDPOINT = "/api/users/autologin";
@@ -39,6 +40,7 @@ let clickRadio = 1;
 let selectedDiv = null;
 let currentChannelId = 0;
 let currentUserId = 0;
+console.log('1 currentUserId:', currentUserId);
 let privacy;
 
 loginForm.style.display = 'none';
@@ -223,7 +225,6 @@ function clearMessages() {
   }
 }
 
-
 // -----------------Messages-----------------
 
 
@@ -240,7 +241,6 @@ sendButton.addEventListener("click", function () {
     addMessage();
   }
 });
-
 
 async function fetchUsername(userId) {
   let testUser;
@@ -273,7 +273,7 @@ function addMessage() {
   const messageDiv = document.createElement("div");
   const date = new Date();
   const day = date.getDate();
-  const month = date.getMonth() + 1; // 0-based index, add 1 for human-readable month
+  const month = date.getMonth() + 1;
   const year = date.getFullYear();
   const hours = date.getHours();
   const minutes = date.getMinutes();
@@ -313,6 +313,7 @@ function addMessage() {
       console.error('Error while add message:', error);
     });
 }
+
 // -----------------AutoLogin-----------------
 
 //AutoLogin
@@ -326,10 +327,12 @@ fetch(API_USERS_AUTOLOGIN_ENDPOINT, {
   return response.json();
 }).then((data) => {
   if (data.status === "success") {
+    console.log('the login is successful')
 
+    console.log('the login is successful', data);
     let username = data.username;
     currentUserId = data.userId;
-
+    console.log('3 currentUserId:', currentUserId);
     welcomeMessage.textContent = `Welcome ${username}`;
 
     showRegisterBtn.style.display = 'none';
@@ -379,6 +382,7 @@ loginBtn.addEventListener('click', () => {
         showLoginBtn.disabled = true;
         showRegisterBtn.disabled = true;
         currentUserId = data.userId;
+        console.log('4 currentUserId:', currentUserId);
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         username.value = '';
@@ -395,6 +399,8 @@ loginBtn.addEventListener('click', () => {
 
 // -----------------Logout-----------------
 logoutBtn.addEventListener('click', () => {
+  // Perform logout action, e.g. clear local storage or make an API call to logout
+  console.log('5 currentUserId:', currentUserId);
   clearMessages();
   currentUserId = 0;
   localStorage.removeItem('token');
@@ -437,13 +443,13 @@ registerBtn.addEventListener('click', () => {
       if (data.status === "success") {
         console.log("User registered successfully");
 
-
+        //Hide login form
         loginForm.style.display = 'none';
 
-
+        //Show register form
         registerForm.style.display = 'block';
 
-
+        //Hide profile section
         profile.style.display = 'none';
         registerUsername.value = '';
         registerPassword.value = '';
