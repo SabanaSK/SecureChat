@@ -5,7 +5,7 @@ const label = document.querySelectorAll('label');
 const channels = document.querySelector('.channels');
 const channelRight = document.querySelector('.right h2');
 const channelsForm = document.querySelector('.channels-form');
-
+const pCreateChannel = document.querySelector('#p-create');
 //-----------------Variables for messages-----------------
 const messageInput = document.querySelector("#message-input");
 const messageList = document.querySelector(".message-list");
@@ -26,11 +26,12 @@ const profile = document.querySelector('.profile');
 const loginForm = document.querySelector('.login-form');
 const showRegisterBtn = document.querySelector('#show-register');
 const showLoginBtn = document.querySelector('#show-login');
-const pOptions = document.querySelector('#pOptions');
 const welcomeMessage = document.querySelector('#welcomeMessage');
+const loginP = document.querySelector('#login-p');
 //-----------------Variables for API-----------------
 const API_CHANNELS_ENDPOINT = "/api/channels";
 const API_MESSAGES_ENDPOINT = "/api/messages";
+const API_USERS_ENDPOINT = "/api/users/getusers";
 const API_USERS_LOGIN_ENDPOINT = "/api/users/login";
 const API_USERS_REGISTER_ENDPOINT = "/api/users/register";
 const API_USERS_AUTOLOGIN_ENDPOINT = "/api/users/autologin";
@@ -39,6 +40,7 @@ let clickRadio = 1;
 let selectedDiv = null;
 let currentChannelId = 0;
 let currentUserId = 0;
+console.log('1 currentUserId:', currentUserId);
 let privacy;
 
 
@@ -93,7 +95,7 @@ fetch(API_CHANNELS_ENDPOINT)
       let elements = document.createElement("div");
       elements.innerHTML = output;
       elements.setAttribute("data-channel-id", item.channelId);
-      document.querySelector(".channels").appendChild(elements)
+      channels.appendChild(elements)
     });
 
   })
@@ -112,7 +114,7 @@ function appendDiv(text) {
 
 function validateInput(inputValue) {
   if (!inputValue) {
-    appendDiv("Please enter a channel name");
+    pCreateChannel.textContent = "Please enter a channel name";
     return false;
   }
   return true;
@@ -130,12 +132,13 @@ async function createChannel(channelName, privacy) {
     const data = await response.json();
     if (data.success) {
       appendDiv(`${channelName} ${privacy}`);
+      pCreateChannel.textContent = " "
     } else {
-      appendDiv(data.error);
+      pCreateChannel.textContent = data.error;
     }
   } catch (error) {
     console.error(error);
-    appendDiv("Error creating channel");
+    pCreateChannel.textContent = "Error creating channel";
   }
 }
 
@@ -145,15 +148,15 @@ createChannelsButton.addEventListener("click", function () {
   const createChannelsInput = document.querySelector("#create-channels").value;
 
   if (privateInput.checked && publicInput.checked) {
-    appendDiv("Please select only one option");
+    pCreateChannel.textContent = "Please select only one option";
     return;
   } else if (!privateInput.checked && !publicInput.checked) {
-    appendDiv("Please select one option");
+    pCreateChannel.textContent = "Please select one option";
     return;
   }
   else {
     if (privateInput.checked) {
-      privacy = "Private";
+      privacy = "Private 🔐";
     } else if (publicInput.checked) {
       privacy = "Public";
     }
@@ -214,24 +217,32 @@ channels.addEventListener('click', function (event) {
 // -----------------Messages-----------------
 
 
-//check if user is logged in
-//if user is logged in, and pick a channel, show the messages with uersname and time
-//if user is not logged in, show only the messages and time
 
 
 messageInput.addEventListener("keypress", function (event) {
-  if (event.key === "Enter" && messageInput.value) {
+  if (event.key === "Enter" && messageInput.value && selectedDiv) {
     addMessage();
   }
 });
 
 sendButton.addEventListener("click", function () {
-  if (messageInput.value) {
+  if (messageInput.value && selectedDiv) {
     addMessage();
   }
 });
 
-function addMessage() {
+async function fetchUsername(userId) {
+  try {
+    const response = await fetch(API_USERS_ENDPOINT + `/${userId}`);
+    const user = await response.json();
+    return user ? user.username : userId;
+  } catch (error) {
+    console.error('Error while fetching user data:', error.message);
+    return userId;
+  }
+}
+
+async function addMessage() {
   const messageDiv = document.createElement("div");
   const date = new Date();
   const day = date.getDate();
@@ -242,7 +253,6 @@ function addMessage() {
   const seconds = date.getSeconds();
   const currentTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 
-
   const requestData = {
     message: messageInput.value,
     date: currentTime,
@@ -250,6 +260,21 @@ function addMessage() {
     channelId: currentChannelId,
   };
 
+  if (currentUserId === undefined) {
+    console.log("currentUserId is undefined");
+    const username = await fetchUsername(currentUserId);
+    messageDiv.innerText = `${username} ${currentTime} ${messageInput.value}`;
+    messageDiv.classList.add("message");
+    messageDiv.classList.add("framed");
+    messageList.appendChild(messageDiv);
+    messageInput.value = "";
+  } else {
+    messageDiv.innerText = `${username} ${currentTime} ${messageInput.value}`;
+    messageDiv.classList.add("message");
+    messageDiv.classList.add("framed");
+    messageList.appendChild(messageDiv);
+    messageInput.value = "";
+  }
   fetch(API_MESSAGES_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -259,13 +284,6 @@ function addMessage() {
     .then((data) => {
       if (data.status === "success") {
         console.log("Add message successfully");
-
-        messageDiv.innerText = currentUserId + " " + currentTime + " " + messageInput.value;
-        messageDiv.classList.add("message");
-        messageDiv.classList.add("framed");
-        messageList.appendChild(messageDiv);
-        messageInput.value = "";
-
       }
     })
     .catch((error) => {
@@ -273,6 +291,50 @@ function addMessage() {
     });
 }
 
+
+/* 
+function addMessage() {
+  const messageDiv = document.createElement("div");
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // 0-based index, add 1 for human-readable month
+  const year = date.getFullYear();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const currentTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+ 
+ 
+  const requestData = {
+    message: messageInput.value,
+    date: currentTime,
+    userId: currentUserId,
+    channelId: currentChannelId,
+  };
+ 
+  fetch(API_MESSAGES_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestData),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "success") {
+        console.log("Add message successfully");
+        console.log('2 currentUserId:', currentUserId);
+        messageDiv.innerText = currentUserId + " " + currentTime + " " + messageInput.value;
+        messageDiv.classList.add("message");
+        messageDiv.classList.add("framed");
+        messageList.appendChild(messageDiv);
+        messageInput.value = "";
+ 
+      }
+    })
+    .catch((error) => {
+      console.error('Error while add message:', error);
+    });
+}
+ */
 
 // -----------------AutoLogin-----------------
 
@@ -292,6 +354,7 @@ fetch(API_USERS_AUTOLOGIN_ENDPOINT, {
     console.log('the login is successful', data);
     let username = data.username;
     currentUserId = data.userId;
+    console.log('3 currentUserId:', currentUserId);
     welcomeMessage.textContent = `Welcome ${username}`;
 
     showRegisterBtn.style.display = 'none';
@@ -308,6 +371,7 @@ fetch(API_USERS_AUTOLOGIN_ENDPOINT, {
     console.log('401: No user is logged in');
   }
   else {
+    currentUserId = 0;
     console.log('Data.status is not success or unauthorised, Look at terminal');
   }
 });
@@ -331,39 +395,35 @@ loginBtn.addEventListener('click', () => {
     .then((res) => res.json())
     .then((data) => {
       if (data.status === "success") {
-
-
         console.log('the login is successful')
         welcomeMessage.textContent = `Welcome ${username.value}`;
-
         channelsForm.style.display = 'block';
         profile.style.display = 'block';
-
-
         loginForm.style.display = 'none';
-
-
         registerForm.style.display = 'none';
-
-
+        showLoginBtn.disabled = true;
+        showRegisterBtn.disabled = true;
         currentUserId = data.userId;
+        console.log('4 currentUserId:', currentUserId);
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-
         username.value = '';
         password.value = '';
-
+        loginP.textContent = " "
       }
     })
     .catch((error) => {
-      console.error('Error while logging in:', error);
+      loginP.textContent = 'Wrong username or password';
+      showRegisterBtn.disabled = false;
+      console.error('Error while logging in:', error.message);
     });
 });
 
 // -----------------Logout-----------------
 logoutBtn.addEventListener('click', () => {
   // Perform logout action, e.g. clear local storage or make an API call to logout
-  currentUserId = 0;
+  let currentUserId = 0;
+  console.log('5 currentUserId:', currentUserId);
   localStorage.removeItem('token');
 
   showRegisterBtn.style.display = 'block';
@@ -376,6 +436,8 @@ logoutBtn.addEventListener('click', () => {
   registerForm.style.display = 'none';
 
   loginForm.style.display = 'block';
+  showLoginBtn.disabled = false;
+  showRegisterBtn.disabled = false;
 });
 
 

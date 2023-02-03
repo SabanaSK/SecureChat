@@ -1,8 +1,9 @@
 import db from '../../config/database.js'
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-const users = db.data.users
+
 const salt = bcrypt.genSaltSync(10);
+const users = db.data.users
 
 function createToken(username) {
   const payload = { username: username }
@@ -11,6 +12,12 @@ function createToken(username) {
   console.log('createToken', payload)
   return payload
 }
+
+const getUsers = (req, res) => {
+  console.log('getUsers', users)
+  res.status(200).send({ users: users });
+};
+
 
 const login = async (req, res) => {
   const { username, password } = req.body
@@ -22,7 +29,8 @@ const login = async (req, res) => {
   const passwordIsValid = bcrypt.compareSync(password, existingUser.password);
   if (passwordIsValid) {
     const user = createToken(username)
-    res.status(200).json({ status: 'success', user, token: user.token });
+    console.log('userid:', existingUser.userId)
+    res.status(200).json({ status: 'success', user, token: user.token, userId: existingUser.userId });
   } else {
     res.sendStatus(401)
   }
@@ -47,9 +55,6 @@ const register = async (req, res) => {
   }
 }
 
-/* const sendErrorResponse = (res, message) => {
-  res.status(401).json({ status: 'failed', message });
-}; */
 
 const autoLogin = (req, res) => {
   const token = req.headers['token'];
@@ -65,7 +70,6 @@ const autoLogin = (req, res) => {
   } else {
     console.log('No token  (No User is logged in) Token:', token);
   }
-  /*  sendErrorResponse(res, 'Invalid token'); */
 
 };
 
@@ -76,17 +80,13 @@ const verifyToken = (req, res) => {
       jwt.verify(token, JWT_KEY);
     } catch (error) {
       console.log('Catch! Invalid token!!');
-      sendErrorResponse(res, 'Invalid token');
+      ;
     }
   } else {
     console.log('No token');
-    sendErrorResponse(res, 'Invalid token');
+    ;
   }
 };
 
 
-/* const secret = async (req, res) => {
-  res.status(200).json({ status: 'success', message: 'You have access to the secret', user: req.user });
-}; */
-
-export default { login, register/* , secret */, verifyToken, autoLogin }
+export default { getUsers, login, register, verifyToken, autoLogin }

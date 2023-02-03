@@ -20,6 +20,7 @@
         <div class="channels">
           <div class="channels-form">
             <h2>Channels</h2>
+            <p id="p-create"></p>
             <input id="create-channels" type="text" placeholder="Channels name..." />
             <input type="radio" id="radio-private" /> <label for="radio-private" id="label-private">Private</label>
             <input type="radio" id="radio-public" /> <label for="radio-public" id="label-public">Public</label>
@@ -36,11 +37,11 @@
         </div>
         <div class="separator"></div>
         <div class="auth">
-          <p id="p-option">Choose Option</p>
+          <p class="p-option">Choose Option</p>
           <button id="show-register">Register</button> </br>
           <button id="show-login">Login</button>
           <div class="register-form">
-            <p>Register</p>
+            <p class="p-option">Register</p>
             <input type="text" id="registerUsername" placeholder="Username">
             <input type="password" id="registerPassword" placeholder="Password">
             <input type="password" id="confirmPassword" placeholder="Confirm Password">
@@ -48,13 +49,13 @@
           </div>
 
           <div class="profile">
-            <div class="avatar"></div>
             <h3 id="welcomeMessage"></h3>
             <button id="logoutBtn">Sign out</button>
           </div>
 
           <div class="login-form">
-            <p>Login</p>
+            <p class="p-option">Login</p>
+            <p id="login-p"></p>
             <input type="text" id="username" placeholder="Username..." />
             <input type="password" id="password" placeholder="Password...">
             <!--   <i class="fa fa-eye password-toggle"></i> -->
@@ -70,15 +71,6 @@
         <h2></h2>
         <div class="message-list framed">
 
-
-
-          <!-- Meddelandet ska hanteras av js 
-          <div class="message one framed"> Giraffer är fascinerande djur </div>
-          <div class="message two framed"> Visste du att giraffer kan bli 6 meter höga? </div>
-          <div class="message one framed"> Wow </div>
-          <div class="message one framed"> Det är högt </div>
-           -->
-
         </div>
 
         <div class="message-form">
@@ -87,7 +79,6 @@
           <input type="text" placeholder="Type your message..." id="message-input" />
           <button type="button" id="send-button"> Send </button>
         </div>
-
       </div>
     </main>
   </body>

@@ -5,6 +5,7 @@ import usersController from '../controllers/usersController.js'
 const router = express.Router()
 
 
+router.get('/getuser', usersController.getUsers)
 
 router.post('/login', usersController.login)
 
