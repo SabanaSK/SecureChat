@@ -5,17 +5,20 @@ import jwt from 'jsonwebtoken';
 const salt = bcrypt.genSaltSync(10);
 const users = db.data.users
 
-function createToken(username) {
-  const payload = { username: username }
+function createToken(username, userId) {
+  const payload = { username: username, userId: userId }
   const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '1h' })
   payload.token = token
-  console.log('createToken', payload)
   return payload
 }
 
 const getUsers = (req, res) => {
-  console.log('getUsers', users)
-  res.status(200).send({ users: users });
+  const userId = req.params.id;
+  const hasUser = users.find(user => user.userId == userId)
+  if (!hasUser) {
+    return res.status(400).json({ status: 'failed', error: 'Did not found userId in database' });
+  }
+  res.status(200).send({ status: 'success', username: hasUser.username });
 };
 
 
@@ -28,8 +31,7 @@ const login = async (req, res) => {
   }
   const passwordIsValid = bcrypt.compareSync(password, existingUser.password);
   if (passwordIsValid) {
-    const user = createToken(username)
-    console.log('userid:', existingUser.userId)
+    const user = createToken(username, existingUser.userId)
     res.status(200).json({ status: 'success', user, token: user.token, userId: existingUser.userId });
   } else {
     res.sendStatus(401)
@@ -46,7 +48,6 @@ const register = async (req, res) => {
     password: passwordHash
   }
   if (!existingUser) {
-    console.log(`3. registering user ${user.username} with password ${user.password}`)
     users.push(user);
     await db.write();
     res.status(201).json({ status: 'success' });
@@ -58,11 +59,10 @@ const register = async (req, res) => {
 
 const autoLogin = (req, res) => {
   const token = req.headers['token'];
-  console.log(`usercontroller AutoLogin:`, token)
   if (token !== 'null') {
     try {
       const decoded = jwt.verify(token, process.env.JWT_KEY);
-      res.status(200).json({ status: 'success', username: decoded.username, token })
+      res.status(200).json({ status: 'success', username: decoded.username, userId: decoded.userId, token })
     } catch (error) {
       console.log('Catch! Invalid token', error.message);
       res.status(401).json({ status: 'failed', message: 'Invalid token' });

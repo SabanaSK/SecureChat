@@ -16,11 +16,6 @@
       "userId": "1",
       "username": "Admin",
       "password": "$2a$10$FjyE/AeOGKTKGecj88BeeOOiy8wOtThD2Ps1a6ZIwb9uJDkVgoFeG"
-    },
-    {
-      "userId": 2,
-      "username": "123",
-      "password": "$2a$10$ID1qgOanznEVL/y.nY7jYOPPOzl1UmR6fWpWscK8IW6u.AwkeXDb2"
     }
   ],
   "messages": [

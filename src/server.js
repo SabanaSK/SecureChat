@@ -11,7 +11,6 @@ const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
 const JWT_KEY = process.env.JWT_KEY;
-/* console.log('ENV  ', PORT, JWT_KEY); */
 const staticPath = url.fileURLToPath(new URL('../static', import.meta.url))
 
 const logger = (req, res, next) => {

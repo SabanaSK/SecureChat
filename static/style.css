@@ -47,9 +47,7 @@ h3 {
   text-align: center;
 }
 
-p:not(.p-option, ) {
-  color: #ab001f;
-}
+
 
 .left,
 .right {
