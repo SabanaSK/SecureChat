@@ -425,6 +425,7 @@ logoutBtn.addEventListener('click', () => {
 registerBtn.addEventListener('click', () => {
   if (registerPassword.value !== confirmPassword.value) {
     console.error("Passwords don't match");
+    loginP.textContent = " Passwords don't match"
     return;
   }
 
@@ -453,7 +454,10 @@ registerBtn.addEventListener('click', () => {
         profile.style.display = 'none';
         registerUsername.value = '';
         registerPassword.value = '';
-
+        loginP.textContent = " Registered successfully! Please login."
+      } else {
+        console.log("User registered failed");
+        loginP.textContent = " User registered failed"
       }
 
     })
