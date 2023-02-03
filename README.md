@@ -13,7 +13,7 @@ Authorized users can create new chat channels that can be open for all users or 
 
 Level: G,
 
-Command for starting the app
+Starting the app
 git clone  
 npm install  
 npm run start. 
